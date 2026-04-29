@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Task Manager{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0d0f14;
+            --surface: #161922;
+            --surface2: #1e2330;
+            --accent: #6ee7b7;
+            --accent2: #38bdf8;
+            --danger: #f87171;
+            --warning: #fbbf24;
+            --text: #e2e8f0;
+            --muted: #64748b;
+            --border: #2d3748;
+            --card-bg: #161922;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Sora', sans-serif;
+            min-height: 100vh;
+        }
+
+        /* NAV */
+        .navbar {
+            background: var(--surface) !important;
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--accent) !important;
+            letter-spacing: -0.5px;
+        }
+
+        .navbar-brand span {
+            color: var(--accent2);
+        }
+
+        .nav-link {
+            color: var(--muted) !important;
+            font-size: 0.875rem;
+            font-weight: 500;
+            padding: 0.5rem 1rem !important;
+            border-radius: 8px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--text) !important;
+            background: var(--surface2);
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            padding: 2.5rem 0;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text);
+            margin: 0;
+        }
+
+        .page-title span {
+            color: var(--accent);
+        }
+
+        /* CARDS */
+        .task-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.5rem;
+            margin-bottom: 1.25rem;
+            transition: border-color 0.2s, transform 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .task-card::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 3px;
+            background: var(--accent);
+            border-radius: 14px 0 0 14px;
+        }
+
+        .task-card.completed::before {
+            background: var(--muted);
+        }
+
+        .task-card:hover {
+            border-color: #3d4d6a;
+            transform: translateY(-2px);
+        }
+
+        .task-card.completed {
+            opacity: 0.65;
+        }
+
+        .task-title {
+            font-weight: 600;
+            font-size: 1.05rem;
+            margin-bottom: 0.4rem;
+            color: var(--text);
+        }
+
+        .task-desc {
+            color: var(--muted);
+            font-size: 0.875rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .task-meta {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* BADGES */
+        .badge-completed {
+            background: rgba(110, 231, 183, 0.15);
+            color: var(--accent);
+            border: 1px solid rgba(110, 231, 183, 0.3);
+            padding: 0.45rem 1.1rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        /* BUTTONS */
+        .btn-edit {
+            background: rgba(56, 189, 248, 0.12);
+            color: var(--accent2);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            border-radius: 8px;
+            padding: 0.4rem 1rem;
+            font-size: 0.82rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            text-decoration: none;
+        }
+
+        .btn-edit:hover {
+            background: rgba(56, 189, 248, 0.25);
+            color: var(--accent2);
+        }
+
+        .btn-delete {
+            background: rgba(248, 113, 113, 0.12);
+            color: var(--danger);
+            border: 1px solid rgba(248, 113, 113, 0.25);
+            border-radius: 8px;
+            padding: 0.4rem 1rem;
+            font-size: 0.82rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            text-decoration: none;
+        }
+
+        .btn-delete:hover {
+            background: rgba(248, 113, 113, 0.25);
+            color: var(--danger);
+        }
+
+        .btn-complete {
+            background: rgba(110, 231, 183, 0.12);
+            color: var(--accent);
+            border: 1px solid rgba(110, 231, 183, 0.25);
+            border-radius: 8px;
+            padding: 0.4rem 1rem;
+            font-size: 0.82rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            text-decoration: none;
+        }
+
+        .btn-complete:hover {
+            background: rgba(110, 231, 183, 0.25);
+            color: var(--accent);
+        }
+
+        .btn-primary-custom {
+            background: var(--accent);
+            color: #0d0f14;
+            border: none;
+            border-radius: 8px;
+            padding: 0.6rem 1.5rem;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary-custom:hover {
+            background: #4ade80;
+            transform: translateY(-1px);
+        }
+
+        /* FORMS */
+        .form-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-label {
+            color: var(--muted);
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control, .form-select {
+            background: var(--surface2) !important;
+            border: 1px solid var(--border) !important;
+            color: var(--text) !important;
+            border-radius: 8px;
+            padding: 0.65rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--accent) !important;
+            box-shadow: 0 0 0 3px rgba(110, 231, 183, 0.1) !important;
+        }
+
+        .form-control::placeholder {
+            color: var(--muted);
+        }
+
+        .form-check-input {
+            background-color: var(--surface2);
+            border-color: var(--border);
+        }
+
+        .form-check-input:checked {
+            background-color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .form-check-label {
+            color: var(--text);
+            font-size: 0.9rem;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--muted);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+            color: var(--border);
+        }
+
+        /* Confirm delete card */
+        .confirm-card {
+            background: var(--surface);
+            border: 1px solid rgba(248, 113, 113, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 500px;
+            margin: 0 auto;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'show_tasks' %}">task<span>mgr</span></a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+                <i class="bi bi-list text-white fs-4"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navMenu">
+                <ul class="navbar-nav ms-auto gap-1">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'add_task' %}active{% endif %}" href="{% url 'add_task' %}">
+                            <i class="bi bi-plus-circle"></i> Add Task
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'add_category' %}active{% endif %}" href="{% url 'add_category' %}">
+                            <i class="bi bi-tag"></i> Add Category
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'show_tasks' %}active{% endif %}" href="{% url 'show_tasks' %}">
+                            <i class="bi bi-list-check"></i> Show Tasks
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

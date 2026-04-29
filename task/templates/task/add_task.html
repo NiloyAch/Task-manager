@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Task — Task Manager{% endblock %}
+
+{% block content %}
+<div class="page-header text-center">
+    <h1 class="page-title">Add <span>Task</span></h1>
+    <p style="color: var(--muted); font-size: 0.9rem; margin-top: 0.5rem;">Fill in the details to create a new task</p>
+</div>
+
+<div class="form-card">
+    <form method="post" novalidate>
+        {% csrf_token %}
+
+        <!-- Task Title -->
+        <div class="mb-4">
+            <label class="form-label" for="{{ form.taskTitle.id_for_label }}">
+                Task Title <span style="color:var(--danger)">*</span>
+            </label>
+            {{ form.taskTitle }}
+            {% if form.taskTitle.errors %}
+                <div style="color:var(--danger); font-size:0.8rem; margin-top:4px;">{{ form.taskTitle.errors.0 }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Task Description -->
+        <div class="mb-4">
+            <label class="form-label" for="{{ form.taskDescription.id_for_label }}">
+                Description <span style="color:var(--danger)">*</span>
+            </label>
+            {{ form.taskDescription }}
+            {% if form.taskDescription.errors %}
+                <div style="color:var(--danger); font-size:0.8rem; margin-top:4px;">{{ form.taskDescription.errors.0 }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Categories -->
+        <div class="mb-4">
+            <label class="form-label" for="{{ form.categories.id_for_label }}">
+                Categories
+            </label>
+            {{ form.categories }}
+            <div style="color:var(--muted); font-size:0.78rem; margin-top:5px;">
+                <i class="bi bi-info-circle"></i> Hold <kbd style="background:var(--surface2);color:var(--text);border:1px solid var(--border);padding:1px 5px;border-radius:4px;">Ctrl</kbd> (or <kbd style="background:var(--surface2);color:var(--text);border:1px solid var(--border);padding:1px 5px;border-radius:4px;">Cmd</kbd> on Mac) to select multiple categories
+            </div>
+            {% if not form.categories.field.queryset %}
+                <div style="color:var(--muted); font-size:0.85rem; margin-top:6px;">
+                    No categories yet. <a href="{% url 'add_category' %}" style="color:var(--accent);">Add one first</a>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Is Completed -->
+        <div class="mb-4">
+            <div class="form-check">
+                {{ form.is_completed }}
+                <label class="form-check-label" for="{{ form.is_completed.id_for_label }}">
+                    Mark as Completed
+                </label>
+            </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="d-flex gap-3 justify-content-end">
+            <a href="{% url 'show_tasks' %}" class="btn-delete" style="padding:0.6rem 1.2rem; text-decoration:none;">
+                Cancel
+            </a>
+            <button type="submit" class="btn-primary-custom">
+                <i class="bi bi-plus-lg"></i> Add Task
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

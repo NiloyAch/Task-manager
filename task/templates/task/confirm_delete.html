@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Task — Task Manager{% endblock %}
+
+{% block content %}
+<div class="page-header text-center">
+    <h1 class="page-title">Delete <span style="color: var(--danger);">Task</span></h1>
+</div>
+
+<div class="confirm-card">
+    <i class="bi bi-exclamation-triangle" style="font-size: 2.5rem; color: var(--danger); display:block; margin-bottom: 1rem;"></i>
+    <h5 style="margin-bottom: 0.5rem;">Are you sure?</h5>
+    <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
+        You're about to permanently delete:<br>
+        <strong style="color: var(--text);">{{ task.taskTitle }}</strong>
+    </p>
+    <form method="post" class="d-flex gap-3 justify-content-center">
+        {% csrf_token %}
+        <a href="{% url 'show_tasks' %}" class="btn-edit" style="padding: 0.6rem 1.4rem;">
+            <i class="bi bi-arrow-left"></i> Cancel
+        </a>
+        <button type="submit" class="btn-delete" style="padding: 0.6rem 1.4rem;">
+            <i class="bi bi-trash3"></i> Yes, Delete
+        </button>
+    </form>
+</div>
+{% endblock %}

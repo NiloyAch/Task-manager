@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Category — Task Manager{% endblock %}
+
+{% block content %}
+<div class="page-header text-center">
+    <h1 class="page-title">Add <span>Category</span></h1>
+    <p style="color: var(--muted); font-size: 0.9rem; margin-top: 0.5rem;">Create a new task category</p>
+</div>
+
+<div class="form-card">
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="mb-4">
+            <label class="form-label" for="{{ form.categoryName.id_for_label }}">Category Name</label>
+            {{ form.categoryName }}
+            {% if form.categoryName.errors %}
+                <div class="text-danger mt-1" style="font-size:0.8rem;">{{ form.categoryName.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="d-flex gap-3 justify-content-end">
+            <a href="{% url 'show_tasks' %}" class="btn-delete" style="padding: 0.6rem 1.2rem;">Cancel</a>
+            <button type="submit" class="btn-primary-custom">
+                <i class="bi bi-tag"></i> Add Category
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
